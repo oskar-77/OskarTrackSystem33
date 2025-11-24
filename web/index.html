@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OskarTrack - AI Customer Tracking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-eye"></i> OskarTrack AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="live.html"><i class="fas fa-video"></i> Live</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="clients.html"><i class="fas fa-users"></i> Clients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="zones.html"><i class="fas fa-map-marked-alt"></i> Zones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-3 fw-bold text-white mb-4">
+                <i class="fas fa-brain"></i> OskarTrack AI System
+            </h1>
+            <p class="lead text-white mb-5">
+                Intelligent Customer Tracking & Analytics Platform<br>
+                <small>Developed by Mr.OSKAR</small>
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <h2 id="totalVisitors">0</h2>
+                        <p>Total Visitors Today</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <h2 id="activeNow">0</h2>
+                        <p>Active Now</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <h2 id="avgDuration">0m</h2>
+                        <p>Avg Duration</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <h2 id="totalZones">0</h2>
+                        <p>Active Zones</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                <a href="dashboard.html" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-chart-bar"></i> View Analytics
+                </a>
+                <a href="live.html" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-video"></i> Live Tracking
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container my-5">
+        <h2 class="text-center mb-5">System Features</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+                        <h4>Person Detection</h4>
+                        <p>Advanced AI-powered person detection and tracking using computer vision</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-map-marked fa-3x text-success mb-3"></i>
+                        <h4>Zone Tracking</h4>
+                        <p>Monitor customer movement across different store zones and areas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-pie fa-3x text-warning mb-3"></i>
+                        <h4>Analytics</h4>
+                        <p>Comprehensive analytics and insights for business intelligence</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-3x text-info mb-3"></i>
+                        <h4>Dwell Time</h4>
+                        <p>Track how long customers spend in different areas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-signal fa-3x text-danger mb-3"></i>
+                        <h4>Real-time Updates</h4>
+                        <p>Live tracking and real-time notifications via WebSocket</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-3x text-secondary mb-3"></i>
+                        <h4>Data Storage</h4>
+                        <p>Secure PostgreSQL database for all customer data and analytics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <p class="mb-0">&copy; 2024 OskarTrack AI System - Developed by Mr.OSKAR</p>
+        <p class="mb-0 small">Powered by FastAPI + OpenCV + PostgreSQL</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Load home page stats
+        async function loadStats() {
+            try {
+                const dailyResponse = await fetch('/api/analytics/daily');
+                const dailyData = await dailyResponse.json();
+                
+                document.getElementById('totalVisitors').textContent = dailyData.total_visitors || 0;
+                document.getElementById('avgDuration').textContent = Math.round(dailyData.average_duration / 60) + 'm';
+                
+                const activeResponse = await fetch('/api/visits/active');
+                const activeData = await activeResponse.json();
+                document.getElementById('activeNow').textContent = activeData.length;
+                
+                const zonesResponse = await fetch('/api/zones');
+                const zonesData = await zonesResponse.json();
+                document.getElementById('totalZones').textContent = zonesData.length;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        loadStats();
+        setInterval(loadStats, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>

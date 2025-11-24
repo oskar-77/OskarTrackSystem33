@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone Management - OskarTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-eye"></i> OskarTrack AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="live.html"><i class="fas fa-video"></i> Live</a></li>
+                    <li class="nav-item"><a class="nav-link" href="clients.html"><i class="fas fa-users"></i> Clients</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="zones.html"><i class="fas fa-map-marked-alt"></i> Zones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-map-marked-alt"></i> Zone Management</h2>
+            <button class="btn btn-success" onclick="createDemoZones()">
+                <i class="fas fa-magic"></i> Create Demo Zones
+            </button>
+        </div>
+
+        <!-- Zones List -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-list"></i> All Zones</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Total Visitors</th>
+                                    <th>Avg Dwell Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="zonesTable">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">Loading zones...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone Stats -->
+            <div class="col-md-4">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-chart-bar"></i> Zone Statistics</h4>
+                    <canvas id="zoneStatsChart"></canvas>
+                </div>
+
+                <div class="dashboard-card mt-3">
+                    <h4><i class="fas fa-info-circle"></i> Zone Types</h4>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <span class="zone-badge zone-entrance">Entrance</span>
+                            <p class="mb-0 small mt-2">Entry points to the store</p>
+                        </div>
+                        <div class="list-group-item">
+                            <span class="zone-badge zone-product">Product Area</span>
+                            <p class="mb-0 small mt-2">Shopping and browsing zones</p>
+                        </div>
+                        <div class="list-group-item">
+                            <span class="zone-badge zone-checkout">Checkout</span>
+                            <p class="mb-0 small mt-2">Payment and exit areas</p>
+                        </div>
+                        <div class="list-group-item">
+                            <span class="zone-badge zone-exit">Exit</span>
+                            <p class="mb-0 small mt-2">Exit points from the store</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let zoneChart;
+
+        async function loadZones() {
+            try {
+                const response = await fetch('/api/zones');
+                const zones = await response.json();
+                
+                const tbody = document.getElementById('zonesTable');
+                if (zones.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No zones configured</td></tr>';
+                } else {
+                    tbody.innerHTML = zones.map(zone => {
+                        const typeClass = `zone-${zone.zone_type.replace('_', '-')}`;
+                        return `
+                            <tr>
+                                <td><strong>${zone.name}</strong><br><small class="text-muted">${zone.description || ''}</small></td>
+                                <td><span class="zone-badge ${typeClass}">${zone.zone_type}</span></td>
+                                <td>${zone.total_visitors}</td>
+                                <td>${zone.average_dwell_time.toFixed(1)}s</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    // Update chart
+                    updateZoneChart(zones);
+                }
+            } catch (error) {
+                console.error('Error loading zones:', error);
+            }
+        }
+
+        function updateZoneChart(zones) {
+            const ctx = document.getElementById('zoneStatsChart').getContext('2d');
+            if (zoneChart) zoneChart.destroy();
+
+            zoneChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: zones.map(z => z.name),
+                    datasets: [{
+                        data: zones.map(z => z.total_visitors),
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        async function createDemoZones() {
+            if (!confirm('Create demo zones? This will add sample zones to the system.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/demo/populate', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                alert(`Created ${data.zones_created} zones and ${data.customers_created} customers`);
+                await loadZones();
+            } catch (error) {
+                alert('Error creating demo data: ' + error.message);
+            }
+        }
+
+        loadZones();
+        setInterval(loadZones, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>

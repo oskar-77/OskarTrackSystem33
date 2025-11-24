@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management - OskarTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-eye"></i> OskarTrack AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="live.html"><i class="fas fa-video"></i> Live</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="clients.html"><i class="fas fa-users"></i> Clients</a></li>
+                    <li class="nav-item"><a class="nav-link" href="zones.html"><i class="fas fa-map-marked-alt"></i> Zones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-users"></i> Customer Management</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                <i class="fas fa-plus"></i> Add Customer
+            </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <input type="text" class="form-control search-box" id="searchInput" 
+                       placeholder="Search customers...">
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-outline-primary" onclick="loadCustomers()">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Customers Grid -->
+        <div id="customersGrid" class="row">
+            <!-- Customers will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div class="modal fade" id="addCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCustomerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Estimated Age (Optional)</label>
+                            <input type="number" class="form-control" id="customerAge" 
+                                   min="1" max="120" placeholder="25">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estimated Gender (Optional)</label>
+                            <select class="form-control" id="customerGender">
+                                <option value="">Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addCustomer()">Add Customer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let allCustomers = [];
+
+        async function loadCustomers() {
+            try {
+                const response = await fetch('/api/customers?limit=100');
+                allCustomers = await response.json();
+                displayCustomers(allCustomers);
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
+        }
+
+        function displayCustomers(customers) {
+            const grid = document.getElementById('customersGrid');
+            
+            if (customers.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center text-muted">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <p>No customers found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = customers.map(customer => `
+                <div class="col-md-4 mb-3">
+                    <div class="customer-card card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">${customer.customer_id}</h5>
+                                    <p class="card-text text-muted mb-2">
+                                        ${customer.estimated_age ? `Age: ${customer.estimated_age}` : 'Age: N/A'}
+                                        ${customer.estimated_gender ? ` | ${customer.estimated_gender}` : ''}
+                                    </p>
+                                </div>
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <strong>${customer.total_visits}</strong><br>
+                                    <small class="text-muted">Visits</small>
+                                </div>
+                                <div class="col-6">
+                                    <strong>${customer.total_time_formatted}</strong><br>
+                                    <small class="text-muted">Total Time</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> Last seen: ${new Date(customer.last_seen).toLocaleString()}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addCustomer() {
+            const age = document.getElementById('customerAge').value;
+            const gender = document.getElementById('customerGender').value;
+
+            try {
+                const params = new URLSearchParams();
+                if (age) params.append('age', age);
+                if (gender) params.append('gender', gender);
+
+                const response = await fetch(`/api/customers?${params.toString()}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addCustomerModal'));
+                modal.hide();
+
+                // Reset form
+                document.getElementById('addCustomerForm').reset();
+
+                // Reload customers
+                await loadCustomers();
+
+                // Show success message
+                alert(`Customer created: ${data.customer_id}`);
+            } catch (error) {
+                alert('Error creating customer: ' + error.message);
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allCustomers.filter(c => 
+                c.customer_id.toLowerCase().includes(searchTerm) ||
+                (c.estimated_gender && c.estimated_gender.toLowerCase().includes(searchTerm))
+            );
+            displayCustomers(filtered);
+        });
+
+        loadCustomers();
+    </script>
+</body>
+</html>
