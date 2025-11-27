@@ -6,7 +6,7 @@ FastAPI Backend for OskarTrack Customer Tracking System
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime, timedelta
@@ -74,11 +74,17 @@ async def startup_event():
     print("🚀 OskarTrack System Started")
 
 
-# ==================== HEALTH CHECK ====================
+# ==================== ROOT & HEALTH CHECK ====================
 
 @app.get("/")
 async def root():
-    """Health check endpoint"""
+    """Redirect to web interface"""
+    return RedirectResponse(url="/web/index.html")
+
+
+@app.get("/api/status")
+async def api_status():
+    """API status endpoint"""
     return {
         "message": "OskarTrack AI System - Developed by Mr.OSKAR",
         "status": "running",
